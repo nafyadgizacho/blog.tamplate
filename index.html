@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Savings Record</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        button {
+            padding: 10px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .admin {
+            display: none;
+        }
+        .total-sum {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Digital Savings Record</h1>
+
+    <div>
+        <label for="payerName">Name of Payer:</label>
+        <input type="text" id="payerName">
+
+        <label for="month">Month:</label>
+        <select id="month">
+            <option value="">Select a month</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+        </select>
+
+        <label for="totalMoney">Total Money Saved ($):</label>
+        <input type="number" id="totalMoney">
+
+        <button id="addButton">Add Record</button>
+    </div>
+
+    <table id="savingsTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Month</th>
+                <th>Total Saved ($)</th>
+                <th class="admin">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Savings records will be added here -->
+        </tbody>
+    </table>
+
+    <div class="total-sum" id="totalSum">Total Money Saved: $0</div>
+</div>
+
+<script>
+    const isAdmin = true; // Set this to false for regular users
+
+    const addButton = document.getElementById('addButton');
+    const savingsTable = document.getElementById('savingsTable').getElementsByTagName('tbody')[0];
+    const totalSumElement = document.getElementById('totalSum');
+
+    let totalMoneySaved = 0;
+
+    addButton.addEventListener('click', function() {
+        const payerName = document.getElementById('payerName').value;
+        const month = document.getElementById('month').value;
+        const totalMoney = parseFloat(document.getElementById('totalMoney').value);
+
+        if (payerName && month && !isNaN(totalMoney)) {
+            const newRow = savingsTable.insertRow();
+            newRow.insertCell(0).innerText = payerName;
+            newRow.insertCell(1).innerText = month;
+            newRow.insertCell(2).innerText = totalMoney.toFixed(2);
+
+            totalMoneySaved += totalMoney; // Update total money saved
+            updateTotalSum();
+
+            if (isAdmin) {
+                const actionsCell = newRow.insertCell(3);
+                const editButton = document.createElement('button');
+                editButton.innerText = 'Edit';
+                editButton.onclick = function() {
+                    document.getElementById('payerName').value = payerName;
+                    document.getElementById('month').value = month;
+                    document.getElementById('totalMoney').value = totalMoney.toFixed(2);
+                    savingsTable.deleteRow(newRow.rowIndex - 1); // Remove the current row
+                    totalMoneySaved -= totalMoney; // Adjust total saved
+                    updateTotalSum();
+                };
+                actionsCell.appendChild(editButton);
+            }
+
+            // Clear the input fields
+            document.getElementById('payerName').value = '';
+            document.getElementById('month').value = '';
+            document.getElementById('totalMoney').value = '';
+        } else {
+            alert('Please fill in all fields');
+        }
+    });
+
+    function updateTotalSum() {
+        totalSumElement.innerText = `Total Money Saved: $${totalMoneySaved.toFixed(2)}`;
+    }
+
+    // Show admin actions if user is admin
+    if (isAdmin) {
+        document.querySelectorAll('.admin').forEach(cell => cell.style.display = '');
+    }
+</script>
+
+</body>
+</html>
+
+        <tbody id="recordTable">
+            <!-- Records will be added here -->
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('moneyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const type = document.getElementById('type').value;
+            const description = document.getElementById('description').value;
+            const amount = document.getElementById('amount').value;
+
+            const table = document.getElementById('recordTable');
+            const row = table.insertRow();
+
+            row.insertCell(0).innerText = type.charAt(0).toUpperCase() + type.slice(1);
+            row.insertCell(1).innerText = description;
+            row.insertCell(2).innerText = parseFloat(amount).toFixed(2);
+
+            document.getElementById('moneyForm').reset();
+        });
+    </script>
+
+</body>
+</html>
